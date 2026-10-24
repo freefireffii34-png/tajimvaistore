@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAJIM VAI STORE</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333333;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: #ffffff;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 70px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.08);
+        }
+
+        .page-view { display: none; }
+        .page-view.active { display: block; }
+
+        .header {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .menu-btn, .refresh-btn, .back-btn {
+            font-size: 20px;
+            color: #2e7d32;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .animated-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ff6f00;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            animation: floatAnimation 2s ease-in-out infinite alternate;
+            text-shadow: 1px 2px 4px rgba(255, 111, 0, 0.2);
+        }
+
+        @keyframes floatAnimation {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-6px); }
+        }
+
+        .search-container {
+            padding: 10px 20px;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border-radius: 30px;
+            border: 1.5px solid #e0e0e0;
+            outline: none;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            transition: all 0.3s;
+        }
+
+        .search-box:focus { border-color: #ff6f00; }
+
+        .search-icon {
+            position: absolute;
+            right: 32px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 16px;
+        }
+
+        .section-title {
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a237e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 10px 20px;
+        }
+
+        .app-card {
+            background: #ffffff;
+            border: 1px solid #f0f0f0;
+            border-radius: 20px;
+            padding: 12px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .app-card:active { transform: scale(0.98); }
+
+        .new-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #d32f2f;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .new-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #d32f2f;
+            border-radius: 50%;
+        }
+
+        .app-icon-wrapper {
+            width: 75px;
+            height: 75px;
+            border-radius: 20px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .app-icon-wrapper i {
+            font-size: 36px;
+            color: #ffffff;
+        }
+
+        .mod-tag {
+            position: absolute;
+            bottom: -6px;
+            background: #ffffff;
+            color: #0288d1;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 10px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .app-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #212121;
+            margin-top: 8px;
+            line-height: 1.3;
+            min-height: 34px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .app-category {
+            font-size: 11px;
+            color: #0288d1;
+            font-weight: 600;
+            margin-top: 4px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .app-info-footer {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px dashed #e0e0e0;
+            padding-top: 8px;
+            font-size: 10px;
+            color: #757575;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 7px 0;
+            border-radius: 8px;
+            border: none;
+            background: #2e7d32;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .buy-btn.out-of-stock {
+            background: #757575;
+            cursor: not-allowed;
+        }
+
+        /* Detail Page */
+        .detail-card {
+            margin: 20px;
+            padding: 20px;
+            background: #ffffff;
+            border: 2px solid #333333;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        }
+
+        .product-header-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .product-header-title span {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1a237e;
+            border: 2px solid #333;
+            padding: 6px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            background: #f8f9fa;
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .package-box {
+            border: 2px solid #333333;
+            border-radius: 10px;
+            padding: 10px 5px;
+            text-align: center;
+            cursor: pointer;
+            background: #fafafa;
+            transition: all 0.2s;
+        }
+
+        .package-box.selected {
+            border-color: #ff6f00;
+            background: #fff8e1;
+            transform: scale(1.03);
+        }
+
+        .package-box.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .package-days {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 1px solid #333;
+            padding-bottom: 4px;
+            margin-bottom: 4px;
+        }
+
+        .package-price {
+            font-size: 15px;
+            font-weight: 800;
+            color: #d32f2f;
+        }
+
+        .year-package-box {
+            border: 2px solid #333333;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #fafafa;
+        }
+
+        .year-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 1px solid #333;
+        }
+
+        .stock-out-tag {
+            font-size: 14px;
+            font-weight: bold;
+            color: #d32f2f;
+        }
+
+        .input-group-custom {
+            margin-bottom: 18px;
+        }
+
+        .input-group-custom label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            color: #424242;
+            margin-bottom: 5px;
+        }
+
+        .input-box-custom {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #333333;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .input-box-custom:focus { border-color: #ff6f00; }
+
+        .bay-submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #ff6f00;
+            color: white;
+            font-size: 18px;
+            font-weight: 800;
+            border: 2px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 2px 4px 0px #333;
+            transition: all 0.1s;
+        }
+
+        .bay-submit-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #333;
+        }
+
+        #paymentSection {
+            display: none;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px dashed #ff6f00;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bikash-info-box {
+            background: #e8f5e9;
+            border: 1.5px dashed #2e7d32;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bikash-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1b5e20;
+        }
+
+        .confirm-btn {
+            width: 100%;
+            padding: 12px;
+            background: #2e7d32;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: 2px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 2px 3px 0px #333;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #f0f0f0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #757575;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .nav-item.active {
+            color: #ff6f00;
+            font-weight: bold;
+        }
+
+        .nav-item i { font-size: 18px; }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 260px;
+            height: 100%;
+            background: white;
+            z-index: 200;
+            transition: 0.3s;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .sidebar.open { left: 0; }
+
+        .sidebar-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff6f00;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .sidebar-item {
+            padding: 12px 0;
+            font-weight: 600;
+            border-bottom: 1px solid #fafafa;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            z-index: 150;
+        }
+
+        .overlay.active { display: block; }
+
+        /* Full Screen Notice (cannot close) */
+        #fullNotice {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+        }
+
+        #fullNotice.active { display: flex; }
+
+        #fullNotice .notice-content {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 16px;
+            max-width: 360px;
+            width: 100%;
+            border: 3px solid #ff6f00;
+        }
+
+        #fullNotice h2 {
+            color: #d32f2f;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        #fullNotice p {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        /* Welcome Message Popup */
+        #welcomeMsg {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #welcomeMsg.active { display: flex; }
+
+        #welcomeMsg .msg-box {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 16px;
+            max-width: 340px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            border: 2px solid #2e7d32;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        #welcomeMsg .close-msg {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        #welcomeMsg h3 {
+            color: #ff6f00;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        #welcomeMsg p {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Full Screen Notice (cannot be closed by user) -->
+    <div id="fullNotice">
+        <div class="notice-content">
+            <h2><i class="fas fa-exclamation-triangle"></i> নোটিশ</h2>
+            <p id="noticeText"></p>
+        </div>
+    </div>
+
+    <!-- Welcome Message (can be closed) -->
+    <div id="welcomeMsg">
+        <div class="msg-box">
+            <span class="close-msg" onclick="closeWelcome()">&times;</span>
+            <h3><i class="fas fa-store"></i> TAJIM VAI STORE</h3>
+            <p id="welcomeText"></p>
+        </div>
+    </div>
+
+    <div class="app-container">
+        
+        <!-- HOME PAGE -->
+        <div id="homePage" class="page-view active">
+            <div class="header">
+                <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <div class="animated-title">TAJIM VAI STORE</div>
+                <button class="refresh-btn" onclick="location.reload()"><i class="fas fa-sync-alt"></i></button>
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-box" id="searchInput" onkeyup="filterApps()" placeholder="Search Anyapp...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <div class="section-title">
+                <i class="fas fa-th-large" style="color: #0288d1;"></i> Popular App
+            </div>
+
+            <div class="app-grid" id="appGrid">
+                <!-- Dynamically loaded from localStorage -->
+            </div>
+        </div>
+
+        <!-- PRODUCT PAGE -->
+        <div id="productPage" class="page-view">
+            <div class="header">
+                <button class="back-btn" onclick="goToHome()"><i class="fas fa-arrow-left"></i></button>
+                <div class="animated-title" id="displayProductTitle">App Name</div>
+                <button class="refresh-btn" onclick="goToHome()"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="detail-card">
+                <div class="product-header-title">
+                    <span id="sketchAppName">App Name</span>
+                </div>
+
+                <div class="packages-grid" id="packagesGrid">
+                    <!-- Dynamic packages -->
+                </div>
+
+                <div id="yearPackageContainer"></div>
+
+                <!-- Dynamic required fields -->
+                <div id="requiredFields"></div>
+
+                <button type="button" class="bay-submit-btn" onclick="handleBayClick()">Bay</button>
+
+                <div id="paymentSection">
+                    <div class="bikash-info-box">
+                        <span class="bikash-text"><i class="fas fa-wallet"></i> Bikash: 016169663821</span>
+                        <button onclick="copyBikash()" style="background:#2e7d32; color:white; border:none; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer;">কপি</button>
+                    </div>
+
+                    <div class="input-group-custom">
+                        <label for="trxInput">TrxID (বিকাশ ট্রানজেকশন আইডি):</label>
+                        <input type="text" id="trxInput" class="input-box-custom" placeholder="উদাহরণ: 8N7A6D5E">
+                    </div>
+
+                    <button type="button" class="confirm-btn" onclick="confirmFinalOrder()">অর্ডার কনফার্ম করুন</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="goToHome()">
+                <i class="fas fa-home"></i>
+                <span>হোম</span>
+            </div>
+            <div class="nav-item" onclick="toggleSidebar()">
+                <i class="fas fa-th-list"></i>
+                <span>TOP APP</span>
+            </div>
+            <div class="nav-item" onclick="showHistory()">
+                <i class="fas fa-history"></i>
+                <span>Histori</span>
+            </div>
+            <div class="nav-item" onclick="alert('ইউজার ID: #TAJIM882')">
+                <i class="fas fa-id-card"></i>
+                <span>id</span>
+            </div>
+            <div class="nav-item" onclick="alert('যোগাযোগ ইমেইল: tajimvaistore@gmail.com')">
+                <i class="fas fa-envelope"></i>
+                <span>Geemail</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">TOP APP MENU</div>
+        <div class="sidebar-item" onclick="filterCategory('all')"><i class="fas fa-border-all"></i> All Apps</div>
+        <div id="sidebarApps"></div>
+    </div>
+
+    <script>
+        let products = [];
+        let currentProduct = null;
+        let selectedDayPackage = null;
+        let selectedPrice = null;
+
+        const DEFAULT_PRODUCTS = [
+            {
+                id: 1, name: "Play store id", category: "ACCOUNT", tag: "Mods", badge: "NEW",
+                icon: "fab fa-google-play", color: "linear-gradient(135deg, #00c6ff, #0072ff)",
+                stockOut: false, requireGmail: true, requirePhone: false, requireUsername: false,
+                packages: [
+                    { days: "3 day", price: 340, stockOut: false },
+                    { days: "7 day", price: 500, stockOut: false },
+                    { days: "30 day", price: 1000, stockOut: false },
+                    { days: "1 years", price: 3000, stockOut: true }
+                ]
+            },
+            {
+                id: 2, name: "Premium Telegram", category: "SOCIAL", tag: "Premium", badge: "NEW",
+                icon: "fab fa-telegram-plane", color: "linear-gradient(135deg, #29b6f6, #0288d1)",
+                stockOut: false, requireGmail: true, requirePhone: false, requireUsername: false,
+                packages: [
+                    { days: "3 day", price: 340, stockOut: false },
+                    { days: "7 day", price: 500, stockOut: false },
+                    { days: "30 day", price: 1000, stockOut: false },
+                    { days: "1 years", price: 3000, stockOut: true }
+                ]
+            },
+            {
+                id: 3, name: "CAP cut Pro", category: "VIDEO EDITOR", tag: "Pro", badge: "NEW",
+                icon: "fas fa-video", color: "linear-gradient(135deg, #212121, #424242)",
+                stockOut: false, requireGmail: true, requirePhone: false, requireUsername: false,
+                packages: [
+                    { days: "3 day", price: 340, stockOut: false },
+                    { days: "7 day", price: 500, stockOut: false },
+                    { days: "30 day", price: 1000, stockOut: false },
+                    { days: "1 years", price: 3000, stockOut: true }
+                ]
+            },
+            {
+                id: 4, name: "MT menegan Pro", category: "TOOL", tag: "Mods", badge: "NEW",
+                icon: "fas fa-gamepad", color: "linear-gradient(135deg, #ef5350, #e53935)",
+                stockOut: false, requireGmail: true, requirePhone: false, requireUsername: false,
+                packages: [
+                    { days: "3 day", price: 340, stockOut: false },
+                    { days: "7 day", price: 500, stockOut: false },
+                    { days: "30 day", price: 1000, stockOut: false },
+                    { days: "1 years", price: 3000, stockOut: true }
+                ]
+            },
+            {
+                id: 5, name: "Dark GPT AI Pro", category: "AI TOOL", tag: "Stock Out", badge: "OFF",
+                icon: "fas fa-robot", color: "linear-gradient(135deg, #37474f, #212121)",
+                stockOut: true, requireGmail: true, requirePhone: false, requireUsername: false,
+                packages: [
+                    { days: "3 day", price: 340, stockOut: true },
+                    { days: "7 day", price: 500, stockOut: true },
+                    { days: "30 day", price: 1000, stockOut: true },
+                    { days: "1 years", price: 3000, stockOut: true }
+                ]
+            },
+            {
+                id: 6, name: "Sensi app", category: "GAMING", tag: "Mods", badge: "NEW",
+                icon: "fas fa-crosshairs", color: "linear-gradient(135deg, #66bb6a, #43a047)",
+                stockOut: false, requireGmail: true, requirePhone: false, requireUsername: false,
+                packages: [
+                    { days: "3 day", price: 340, stockOut: false },
+                    { days: "7 day", price: 500, stockOut: false },
+                    { days: "30 day", price: 1000, stockOut: false },
+                    { days: "1 years", price: 3000, stockOut: true }
+                ]
+            },
+            {
+                id: 7, name: "Gimine Pro", category: "AI MODEL", tag: "Stock Out", badge: "OFF",
+                icon: "fas fa-brain", color: "linear-gradient(135deg, #ab47bc, #8e24aa)",
+                stockOut: true, requireGmail: true, requirePhone: false, requireUsername: false,
+                packages: [
+                    { days: "3 day", price: 340, stockOut: true },
+                    { days: "7 day", price: 500, stockOut: true },
+                    { days: "30 day", price: 1000, stockOut: true },
+                    { days: "1 years", price: 3000, stockOut: true }
+                ]
+            },
+            {
+                id: 8, name: "AIDE Free", category: "DEVELOPMENT", tag: "Free", badge: "FREE",
+                icon: "fas fa-code", color: "linear-gradient(135deg, #ffa726, #fb8c00)",
+                stockOut: false, requireGmail: false, requirePhone: false, requireUsername: false,
+                packages: [
+                    { days: "Free", price: 0, stockOut: false }
+                ]
+            }
+        ];
+
+        function init() {
+            const stored = localStorage.getItem('tajim_products');
+            if (stored) {
+                products = JSON.parse(stored);
+            } else {
+                products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+                localStorage.setItem('tajim_products', JSON.stringify(products));
+            }
+            renderApps();
+            renderSidebar();
+            checkNoticeAndMessage();
+        }
+
+        function checkNoticeAndMessage() {
+            const notice = localStorage.getItem('tajim_notice') || '';
+            const message = localStorage.getItem('tajim_message') || '';
+
+            if (notice.trim()) {
+                document.getElementById('noticeText').innerText = notice;
+                document.getElementById('fullNotice').classList.add('active');
+                // Notice cannot be closed - no close button
+            } else if (message.trim()) {
+                document.getElementById('welcomeText').innerText = message;
+                document.getElementById('welcomeMsg').classList.add('active');
+            }
+        }
+
+        function closeWelcome() {
+            document.getElementById('welcomeMsg').classList.remove('active');
+        }
+
+        function renderApps() {
+            const grid = document.getElementById('appGrid');
+            grid.innerHTML = products.map(p => {
+                const isOut = p.stockOut;
+                const badgeColor = isOut ? '#757575' : (p.badge === 'FREE' ? '#ff6f00' : '#d32f2f');
+                const badgeText = isOut ? 'OFF' : p.badge;
+                const btnClass = isOut ? 'buy-btn out-of-stock' : 'buy-btn';
+                const btnText = isOut ? 'Stock Out' : (p.badge === 'FREE' ? 'Get Free' : 'Buy');
+                const btnStyle = (!isOut && p.badge === 'FREE') ? 'style="background:#ff6f00;"' : '';
+
+                return `
+                <div class="app-card" onclick="goToProduct(${p.id})">
+                    <div class="new-badge" style="color:${badgeColor};">
+                        <div class="new-dot" style="background:${badgeColor};"></div> ${badgeText}
+                    </div>
+                    <div class="app-icon-wrapper" style="background: ${p.color};">
+                        <i class="${p.icon}"></i>
+                        <div class="mod-tag" style="${isOut ? 'color:red;' : ''}">${p.tag}</div>
+                    </div>
+                    <div class="app-title">${p.name}</div>
+                    <div class="app-category">${p.category}</div>
+                    <div class="app-info-footer">
+                        <span class="info-item"><i class="fab fa-android"></i> 6.0+</span>
+                        <span class="info-item"><i class="fas fa-bolt"></i> Latest</span>
+                    </div>
+                    <button class="${btnClass}" ${btnStyle}>${btnText}</button>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderSidebar() {
+            const container = document.getElementById('sidebarApps');
+            container.innerHTML = products.filter(p => !p.stockOut).slice(0, 5).map(p => `
+                <div class="sidebar-item" onclick="goToProduct(${p.id})">
+                    <i class="${p.icon}"></i> ${p.name}
+                </div>
+            `).join('');
+        }
+
+        function goToProduct(id) {
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+
+            if (p.stockOut) {
+                alert('দুঃখিত, এই অ্যাপটি বর্তমানে Stock Out রয়েছে!');
+                return;
+            }
+
+            currentProduct = p;
+            document.getElementById('displayProductTitle').innerText = p.name;
+            document.getElementById('sketchAppName').innerText = p.name;
+
+            // Packages
+            const grid = document.getElementById('packagesGrid');
+            const shortPkgs = p.packages.filter(pk => !pk.days.toLowerCase().includes('year') && !pk.days.toLowerCase().includes('free'));
+            const yearPkgs = p.packages.filter(pk => pk.days.toLowerCase().includes('year'));
+            const freePkg = p.packages.find(pk => pk.days.toLowerCase().includes('free') || pk.price === 0);
+
+            grid.innerHTML = shortPkgs.map(pk => `
+                <div class="package-box ${pk.stockOut ? 'disabled' : ''}" 
+                     onclick="${pk.stockOut ? '' : `selectPackage(this, '${pk.days}', '${pk.price} Tk')`}">
+                    <div class="package-days">${pk.days}</div>
+                    <div class="package-price">${pk.price}</div>
+                    ${pk.stockOut ? '<div style="font-size:10px;color:red;">stock out</div>' : ''}
+                </div>
+            `).join('');
+
+            // Year package
+            const yearCont = document.getElementById('yearPackageContainer');
+            if (yearPkgs.length > 0) {
+                const yp = yearPkgs[0];
+                yearCont.innerHTML = `
+                    <div class="year-package-box" style="${yp.stockOut ? 'opacity:0.7;' : ''}">
+                        <div>
+                            <div class="year-title">${yp.days}</div>
+                            <div style="font-size:15px;font-weight:bold;margin-top:2px;">${yp.price} Tk</div>
+                        </div>
+                        <div class="stock-out-tag">${yp.stockOut ? 'stock out' : 'Available'}</div>
+                    </div>
+                `;
+            } else {
+                yearCont.innerHTML = '';
+            }
+
+            // Required fields
+            const fields = document.getElementById('requiredFields');
+            let html = '';
+            if (p.requireGmail) {
+                html += `
+                    <div class="input-group-custom">
+                        <label for="gmailInput">Gmail id:</label>
+                        <input type="email" id="gmailInput" class="input-box-custom" placeholder="আপনার জিমেইল আইডি দিন">
+                    </div>
+                `;
+            }
+            if (p.requirePhone) {
+                html += `
+                    <div class="input-group-custom">
+                        <label for="phoneInput">Phone Number:</label>
+                        <input type="tel" id="phoneInput" class="input-box-custom" placeholder="আপনার ফোন নাম্বার দিন">
+                    </div>
+                `;
+            }
+            if (p.requireUsername) {
+                html += `
+                    <div class="input-group-custom">
+                        <label for="usernameInput">Username:</label>
+                        <input type="text" id="usernameInput" class="input-box-custom" placeholder="Username দিন">
+                    </div>
+                `;
+            }
+            if (!p.requireGmail && !p.requirePhone && !p.requireUsername) {
+                html = `<p style="text-align:center;color:#2e7d32;font-weight:600;margin-bottom:15px;">কোনো অতিরিক্ত তথ্য লাগবে না</p>`;
+            }
+            fields.innerHTML = html;
+
+            // Reset
+            selectedDayPackage = null;
+            selectedPrice = null;
+            document.getElementById('paymentSection').style.display = 'none';
+            document.getElementById('trxInput').value = '';
+
+            // If free product, auto select
+            if (freePkg) {
+                selectedDayPackage = freePkg.days;
+                selectedPrice = '0 Tk';
+            }
+
+            document.getElementById('homePage').classList.remove('active');
+            document.getElementById('productPage').classList.add('active');
+            window.scrollTo(0, 0);
+
+            // close sidebar
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        function goToHome() {
+            document.getElementById('productPage').classList.remove('active');
+            document.getElementById('homePage').classList.add('active');
+            window.scrollTo(0, 0);
+            currentProduct = null;
+        }
+
+        function selectPackage(element, days, price) {
+            document.querySelectorAll('.package-box').forEach(box => box.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedDayPackage = days;
+            selectedPrice = price;
+        }
+
+        function handleBayClick() {
+            if (!currentProduct) return;
+
+            // Check package selected (unless free)
+            const isFree = currentProduct.packages.some(pk => pk.price === 0 || pk.days.toLowerCase().includes('free'));
+            if (!selectedDayPackage && !isFree) {
+                alert('অনুগ্রহ করে প্রথমে কতদিনের জন্য নিবেন তা সিলেক্ট করুন!');
+                return;
+            }
+
+            // Validate required fields
+            if (currentProduct.requireGmail) {
+                const gmail = document.getElementById('gmailInput')?.value.trim() || '';
+                const gmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!gmail || !gmailRegex.test(gmail)) {
+                    alert('অনুগ্রহ করে সঠিক জিমেইল আইডি দিন!');
+                    return;
+                }
+            }
+            if (currentProduct.requirePhone) {
+                const phone = document.getElementById('phoneInput')?.value.trim() || '';
+                if (!phone || phone.length < 10) {
+                    alert('সঠিক ফোন নাম্বার দিন!');
+                    return;
+                }
+            }
+            if (currentProduct.requireUsername) {
+                const user = document.getElementById('usernameInput')?.value.trim() || '';
+                if (!user) {
+                    alert('Username দিন!');
+                    return;
+                }
+            }
+
+            // Free product - direct confirm
+            if (isFree && (selectedPrice === '0 Tk' || selectedDayPackage === 'Free')) {
+                alert(`ধন্যবাদ! ${currentProduct.name} ফ্রি পেয়েছেন।`);
+                goToHome();
+                return;
+            }
+
+            document.getElementById('paymentSection').style.display = 'block';
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        function copyBikash() {
+            navigator.clipboard.writeText('016169663821');
+            alert('বিকাশ নাম্বার কপি করা হয়েছে: 016169663821');
+        }
+
+        function confirmFinalOrder() {
+            const trx = document.getElementById('trxInput').value.trim();
+            const trxRegex = /^[a-zA-Z0-9]{8,15}$/;
+
+            if (!trx) {
+                alert('অনুগ্রহ করে বিকাশ পেমেন্টের পর ট্রানজেকশন আইডি (TrxID) দিন!');
+                return;
+            }
+            if (!trxRegex.test(trx)) {
+                alert('ভুল ট্রানজেকশন আইডি! সঠিক TrxID দিন।');
+                return;
+            }
+
+            // Save order to localStorage
+            const order = {
+                id: Date.now(),
+                appName: currentProduct.name,
+                package: selectedDayPackage,
+                price: selectedPrice,
+                gmail: currentProduct.requireGmail ? (document.getElementById('gmailInput')?.value.trim() || '') : '',
+                phone: currentProduct.requirePhone ? (document.getElementById('phoneInput')?.value.trim() || '') : '',
+                username: currentProduct.requireUsername ? (document.getElementById('usernameInput')?.value.trim() || '') : '',
+                trxId: trx.toUpperCase(),
+                status: 'Pending',
+                createdAt: new Date().toLocaleString('bn-BD')
+            };
+
+            let orders = JSON.parse(localStorage.getItem('tajim_orders') || '[]');
+            orders.push(order);
+            localStorage.setItem('tajim_orders', JSON.stringify(orders));
+            localStorage.setItem('tajim_last_update', Date.now().toString());
+
+            alert(`ধন্যবাদ! আপনার অর্ডারটি সফলভাবে পাওয়া গেছে।\n\nঅ্যাপ: ${order.appName}\nপ্যাকেজ: ${order.package} (${order.price})\nTrxID: ${order.trxId}\n\nস্ট্যাটাস: Pending\nহিস্টোরি থেকে দেখতে পারবেন।`);
+            goToHome();
+        }
+
+        function showHistory() {
+            const orders = JSON.parse(localStorage.getItem('tajim_orders') || '[]');
+            if (!orders.length) {
+                alert('আপনার কোনো অর্ডার নেই!');
+                return;
+            }
+            const sorted = [...orders].sort((a,b) => b.id - a.id);
+            let msg = '📋 আপনার অর্ডার হিস্টোরি:\n\n';
+            sorted.forEach((o, i) => {
+                msg += `${i+1}. ${o.appName}\n`;
+                msg += `   প্যাকেজ: ${o.package} (${o.price})\n`;
+                msg += `   TrxID: ${o.trxId}\n`;
+                msg += `   স্ট্যাটাস: ${o.status}\n`;
+                msg += `   সময়: ${o.createdAt}\n`;
+                if (o.deliveryMsg) msg += `   মেসেজ: ${o.deliveryMsg}\n`;
+                if (o.deliveryLink) msg += `   লিংক: ${o.deliveryLink}\n`;
+                if (o.deliveryNote) msg += `   বিবরণ: ${o.deliveryNote}\n`;
+                msg += `\n`;
+            });
+            alert(msg);
+        }
+
+        function filterApps() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.getElementsByClassName('app-card');
+            for (let card of cards) {
+                const title = card.querySelector('.app-title').innerText.toLowerCase();
+                card.style.display = title.includes(input) ? 'flex' : 'none';
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function filterCategory(cat) {
+            toggleSidebar();
+            goToHome();
+        }
+
+        // Init on load
+        init();
+
+        // Listen for storage changes (if admin changes in another tab)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'tajim_products' || e.key === 'tajim_notice' || e.key === 'tajim_message') {
+                location.reload();
+            }
+        });
+    </script>
+</body>
+</html>
