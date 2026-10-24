@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>TAJIM VAI STORE - Control Panel New</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: #f0f2f5; color: #333; min-height: 100vh; padding-bottom: 30px; }
+        .container { max-width: 480px; margin: 0 auto; padding: 12px; }
+        .header { background: linear-gradient(135deg, #ff6f00, #e65100); color: white; padding: 16px 18px; border-radius: 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(255,111,0,0.3); }
+        .header h1 { font-size: 18px; font-weight: 800; }
+        .header a { color: white; text-decoration: none; background: rgba(255,255,255,0.25); padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+        .section { background: white; border-radius: 14px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid #eee; }
+        .section-title { font-size: 15px; font-weight: 700; color: #1a237e; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .btn { padding: 11px 16px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; transition: 0.15s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-primary { background: #ff6f00; color: white; }
+        .btn-success { background: #2e7d32; color: white; }
+        .btn-danger { background: #c62828; color: white; }
+        .btn-edit { background: #1565c0; color: white; padding: 7px 12px; font-size: 12px; border-radius: 8px; }
+        .btn-sm { padding: 6px 10px; font-size: 12px; }
+        .btn-full { width: 100%; }
+        .btn-outline { background: #f5f5f5; color: #555; border: 1px solid #ddd; }
+        label { font-size: 13px; font-weight: 700; color: #444; display: block; margin-top: 14px; margin-bottom: 5px; }
+        input[type="text"], input[type="number"], input[type="email"], select, textarea { width: 100%; padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 15px; outline: none; background: #fafafa; }
+        input:focus, select:focus, textarea:focus { border-color: #ff6f00; background: #fff; }
+        textarea { resize: vertical; min-height: 70px; }
+        .radio-row, .check-row { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 8px; }
+        .radio-row label, .check-row label { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 14px; margin: 0; cursor: pointer; }
+        .radio-row input, .check-row input { width: 18px; height: 18px; accent-color: #ff6f00; }
+        .product-list, .order-list { list-style: none; }
+        .product-item, .order-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 13px 0; border-bottom: 1px solid #f0f0f0; flex-wrap: wrap; gap: 8px; }
+        .product-item:last-child, .order-item:last-child { border-bottom: none; }
+        .product-name, .order-title { font-weight: 700; font-size: 14px; }
+        .product-status, .order-status { font-size: 11px; padding: 3px 9px; border-radius: 20px; margin-left: 8px; font-weight: 700; }
+        .status-ok { background: #e8f5e9; color: #2e7d32; }
+        .status-out { background: #ffebee; color: #c62828; }
+        .status-pending { background: #fff3e0; color: #e65100; }
+        .status-processing { background: #e3f2fd; color: #1565c0; }
+        .status-completed { background: #e8f5e9; color: #2e7d32; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.55); z-index: 1000; overflow-y: auto; padding: 12px; }
+        .modal.active { display: block; }
+        .modal-content { background: white; border-radius: 18px; padding: 20px 18px 24px; width: 100%; max-width: 420px; margin: 20px auto; box-shadow: 0 12px 40px rgba(0,0,0,0.25); position: relative; }
+        .modal-header { font-size: 17px; font-weight: 800; color: #1a237e; text-align: center; margin-bottom: 6px; padding-bottom: 12px; border-bottom: 2px solid #ff6f00; }
+        .close-modal { position: absolute; top: 14px; right: 16px; font-size: 26px; cursor: pointer; color: #999; background: none; border: none; }
+        .icon-select { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 8px; }
+        .icon-option { text-align: center; padding: 12px 4px; border: 2px solid #eee; border-radius: 10px; cursor: pointer; font-size: 20px; background: #fafafa; }
+        .icon-option.selected { border-color: #ff6f00; background: #fff8e1; }
+        .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+        .pkg-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; background: #fafafa; padding: 10px; border-radius: 10px; border: 1px solid #eee; }
+        .pkg-row input[type="text"], .pkg-row input[type="number"] { flex: 1; min-width: 70px; padding: 8px; font-size: 13px; }
+        .pkg-row label { font-size: 12px; margin: 0; display: flex; align-items: center; gap: 4px; }
+
+        .alert { padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; font-weight: 600; font-size: 14px; display: none; text-align: center; }
+        .alert-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+        .alert-error { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+        .info-box { background: #fff8e1; border: 1px solid #ffcc80; padding: 12px; border-radius: 10px; font-size: 13px; margin-bottom: 12px; line-height: 1.45; }
+        .msg-info { background: #e8f5e9; border: 1px solid #a5d6a7; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 22px; }
+        .modal-actions .btn { flex: 1; padding: 13px; font-size: 15px; }
+        .empty-state { text-align: center; padding: 30px 10px; color: #999; font-size: 14px; }
+        .add-btn-big { width: 100%; padding: 14px; font-size: 16px; border-radius: 12px; margin-top: 4px; }
+        .order-details { font-size: 12px; color: #666; margin-top: 4px; line-height: 1.5; }
+        .order-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+        .tab-bar { display: flex; gap: 8px; margin-bottom: 14px; }
+        .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; background: #eee; color: #555; }
+        .tab-btn.active { background: #ff6f00; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-cogs"></i> Control Panel</h1>
+            <a href="index.html" target="_blank"><i class="fas fa-external-link-alt"></i> ওয়েবসাইট</a>
+        </div>
+        <div id="alertBox" class="alert"></div>
+
+        <!-- Tabs -->
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="showTab('products')">প্রোডাক্ট</button>
+            <button class="tab-btn" onclick="showTab('orders')">অর্ডার লিস্ট</button>
+            <button class="tab-btn" onclick="showTab('settings')">সেটিংস</button>
+        </div>
+
+        <!-- PRODUCTS TAB -->
+        <div id="tab-products">
+            <div class="section">
+                <div class="section-title"><i class="fas fa-plus-circle" style="color:#ff6f00;"></i> নতুন প্রোডাক্ট যোগ</div>
+                <button class="btn btn-primary add-btn-big" onclick="openAddModal()"><i class="fas fa-plus"></i> + নতুন প্রোডাক্ট যোগ করুন</button>
+            </div>
+            <div class="section">
+                <div class="section-title"><i class="fas fa-th-large" style="color:#1565c0;"></i> All APP</div>
+                <ul class="product-list" id="productList"></ul>
+            </div>
+        </div>
+
+        <!-- ORDERS TAB -->
+        <div id="tab-orders" style="display:none;">
+            <div class="section">
+                <div class="section-title"><i class="fas fa-shopping-cart" style="color:#e65100;"></i> অর্ডার লিস্ট <span id="orderCount" style="font-size:12px;color:#888;"></span></div>
+                <ul class="order-list" id="orderList"></ul>
+            </div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div id="tab-settings" style="display:none;">
+            <div class="section">
+                <div class="section-title"><i class="fas fa-bullhorn" style="color:#e65100;"></i> ওয়েবসাইট নোটিশ</div>
+                <div class="info-box">ফুল স্ক্রিন নোটিশ। ইউজার ক্লোজ করতে পারবে না।</div>
+                <textarea id="siteNotice" rows="3" placeholder="নোটিশ লিখুন..."></textarea>
+                <div style="display:flex;gap:10px;margin-top:12px;">
+                    <button class="btn btn-primary" style="flex:1;" onclick="saveNotice()">সেট করুন</button>
+                    <button class="btn btn-danger" style="flex:1;" onclick="removeNotice()">রিমুভ</button>
+                </div>
+                <p id="noticeStatus" style="font-size:12px;margin-top:8px;color:#666;text-align:center;"></p>
+            </div>
+            <div class="section">
+                <div class="section-title"><i class="fas fa-comment-dots" style="color:#2e7d32;"></i> স্বাগতম মেসেজ</div>
+                <div class="info-box msg-info">সাইট ওপেন হলে পপআপ আসবে।</div>
+                <textarea id="siteMessage" rows="2" placeholder="মেসেজ লিখুন..."></textarea>
+                <div style="display:flex;gap:10px;margin-top:12px;">
+                    <button class="btn btn-success" style="flex:1;" onclick="saveMessage()">সেট করুন</button>
+                    <button class="btn btn-danger" style="flex:1;" onclick="removeMessage()">রিমুভ</button>
+                </div>
+                <p id="messageStatus" style="font-size:12px;margin-top:8px;color:#666;text-align:center;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD/EDIT PRODUCT MODAL -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <div class="modal-header" id="modalTitle">নতুন প্রোডাক্ট যোগ</div>
+            <input type="hidden" id="editId">
+            <label>APP Name:</label>
+            <input type="text" id="appName" placeholder="যেমন: Play store id">
+            <label>APP আইকন (Choose):</label>
+            <div class="icon-select">
+                <div class="icon-option" data-icon="fab fa-google-play" onclick="selectIcon(this)"><i class="fab fa-google-play"></i></div>
+                <div class="icon-option" data-icon="fab fa-telegram-plane" onclick="selectIcon(this)"><i class="fab fa-telegram-plane"></i></div>
+                <div class="icon-option" data-icon="fas fa-video" onclick="selectIcon(this)"><i class="fas fa-video"></i></div>
+                <div class="icon-option" data-icon="fas fa-gamepad" onclick="selectIcon(this)"><i class="fas fa-gamepad"></i></div>
+                <div class="icon-option" data-icon="fas fa-robot" onclick="selectIcon(this)"><i class="fas fa-robot"></i></div>
+                <div class="icon-option" data-icon="fas fa-crosshairs" onclick="selectIcon(this)"><i class="fas fa-crosshairs"></i></div>
+                <div class="icon-option" data-icon="fas fa-brain" onclick="selectIcon(this)"><i class="fas fa-brain"></i></div>
+                <div class="icon-option" data-icon="fas fa-code" onclick="selectIcon(this)"><i class="fas fa-code"></i></div>
+                <div class="icon-option" data-icon="fas fa-mobile-alt" onclick="selectIcon(this)"><i class="fas fa-mobile-alt"></i></div>
+                <div class="icon-option" data-icon="fas fa-crown" onclick="selectIcon(this)"><i class="fas fa-crown"></i></div>
+                <div class="icon-option" data-icon="fas fa-star" onclick="selectIcon(this)"><i class="fas fa-star"></i></div>
+                <div class="icon-option" data-icon="fas fa-bolt" onclick="selectIcon(this)"><i class="fas fa-bolt"></i></div>
+            </div>
+            <input type="hidden" id="appIcon" value="fas fa-box">
+            <label>Icon Color:</label>
+            <input type="text" id="appColor" value="linear-gradient(135deg, #00c6ff, #0072ff)">
+
+            <label>প্রোডাক্ট ছবি (গ্যালারি থেকে):</label>
+            <input type="file" id="appImageFile" accept="image/*" style="padding:8px;border:2px dashed #ff6f00;border-radius:10px;width:100%;background:#fff8e1;">
+            <input type="hidden" id="appImageData" value="">
+            <div id="imagePreview" style="margin-top:8px;text-align:center;display:none;">
+                <img id="previewImg" style="max-width:100px;max-height:100px;border-radius:12px;border:2px solid #eee;">
+                <br><button type="button" class="btn btn-sm btn-danger" style="margin-top:6px;" onclick="removeImage()">ছবি রিমুভ</button>
+            </div>
+
+            <label>প্যাকেজসমূহ (কাস্টম দিন + দাম + স্টক):</label>
+            <div id="packagesList" style="margin-top:8px;"></div>
+            <button type="button" class="btn btn-outline btn-full" style="margin-top:8px;" onclick="addPackageRow()">+ নতুন প্যাকেজ যোগ</button>
+
+            <label>টাইপ:</label>
+            <div class="radio-row">
+                <label><input type="radio" name="appType" value="Free"> Free</label>
+                <label><input type="radio" name="appType" value="Premium" checked> Premium</label>
+            </div>
+            <div class="price-grid">
+                <div>
+                    <label>ট্যাগ:</label>
+                    <select id="appTag"><option value="Mods">Mods</option><option value="Premium">Premium</option><option value="Pro">Pro</option><option value="Free">Free</option><option value="Stock Out">Stock Out</option></select>
+                </div>
+                <div>
+                    <label>Badge:</label>
+                    <select id="appBadge"><option value="NEW">NEW</option><option value="FREE">FREE</option><option value="OFF">OFF</option></select>
+                </div>
+            </div>
+            <label>সার্বিক Stock Status:</label>
+            <div class="radio-row">
+                <label><input type="radio" name="stockStatus" value="false" checked> Available</label>
+                <label><input type="radio" name="stockStatus" value="true"> Stock Out</label>
+            </div>
+            <label>ইউজারকে কী দিতে হবে?</label>
+            <div class="check-row">
+                <label><input type="checkbox" id="reqGmail" checked> Gmail ID</label>
+                <label><input type="checkbox" id="reqPhone"> Phone</label>
+                <label><input type="checkbox" id="reqUsername"> Username</label>
+            </div>
+            <label>বিবরণ:</label>
+            <textarea id="appDescription" placeholder="বিবরণ..."></textarea>
+            <label>Category:</label>
+            <input type="text" id="appCategory" value="OTHER">
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal()">বাতিল</button>
+                <button class="btn btn-primary" onclick="saveProduct()"><i class="fas fa-check"></i> Publish</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_PRODUCTS = [
+            {id:1,name:"Play store id",category:"ACCOUNT",tag:"Mods",badge:"NEW",icon:"fab fa-google-play",color:"linear-gradient(135deg, #00c6ff, #0072ff)",stockOut:false,requireGmail:true,requirePhone:false,requireUsername:false,description:"",packages:[{days:"3 day",price:340,stockOut:false},{days:"7 day",price:500,stockOut:false},{days:"30 day",price:1000,stockOut:false},{days:"1 years",price:3000,stockOut:true}]},
+            {id:2,name:"Premium Telegram",category:"SOCIAL",tag:"Premium",badge:"NEW",icon:"fab fa-telegram-plane",color:"linear-gradient(135deg, #29b6f6, #0288d1)",stockOut:false,requireGmail:true,requirePhone:false,requireUsername:false,description:"",packages:[{days:"3 day",price:340,stockOut:false},{days:"7 day",price:500,stockOut:false},{days:"30 day",price:1000,stockOut:false},{days:"1 years",price:3000,stockOut:true}]},
+            {id:3,name:"CAP cut Pro",category:"VIDEO EDITOR",tag:"Pro",badge:"NEW",icon:"fas fa-video",color:"linear-gradient(135deg, #212121, #424242)",stockOut:false,requireGmail:true,requirePhone:false,requireUsername:false,description:"",packages:[{days:"3 day",price:340,stockOut:false},{days:"7 day",price:500,stockOut:false},{days:"30 day",price:1000,stockOut:false},{days:"1 years",price:3000,stockOut:true}]},
+            {id:4,name:"MT menegan Pro",category:"TOOL",tag:"Mods",badge:"NEW",icon:"fas fa-gamepad",color:"linear-gradient(135deg, #ef5350, #e53935)",stockOut:false,requireGmail:true,requirePhone:false,requireUsername:false,description:"",packages:[{days:"3 day",price:340,stockOut:false},{days:"7 day",price:500,stockOut:false},{days:"30 day",price:1000,stockOut:false},{days:"1 years",price:3000,stockOut:true}]},
+            {id:5,name:"Dark GPT AI Pro",category:"AI TOOL",tag:"Stock Out",badge:"OFF",icon:"fas fa-robot",color:"linear-gradient(135deg, #37474f, #212121)",stockOut:true,requireGmail:true,requirePhone:false,requireUsername:false,description:"",packages:[{days:"3 day",price:340,stockOut:true},{days:"7 day",price:500,stockOut:true},{days:"30 day",price:1000,stockOut:true},{days:"1 years",price:3000,stockOut:true}]},
+            {id:6,name:"Sensi app",category:"GAMING",tag:"Mods",badge:"NEW",icon:"fas fa-crosshairs",color:"linear-gradient(135deg, #66bb6a, #43a047)",stockOut:false,requireGmail:true,requirePhone:false,requireUsername:false,description:"",packages:[{days:"3 day",price:340,stockOut:false},{days:"7 day",price:500,stockOut:false},{days:"30 day",price:1000,stockOut:false},{days:"1 years",price:3000,stockOut:true}]},
+            {id:7,name:"Gimine Pro",category:"AI MODEL",tag:"Stock Out",badge:"OFF",icon:"fas fa-brain",color:"linear-gradient(135deg, #ab47bc, #8e24aa)",stockOut:true,requireGmail:true,requirePhone:false,requireUsername:false,description:"",packages:[{days:"3 day",price:340,stockOut:true},{days:"7 day",price:500,stockOut:true},{days:"30 day",price:1000,stockOut:true},{days:"1 years",price:3000,stockOut:true}]},
+            {id:8,name:"AIDE Free",category:"DEVELOPMENT",tag:"Free",badge:"FREE",icon:"fas fa-code",color:"linear-gradient(135deg, #ffa726, #fb8c00)",stockOut:false,requireGmail:false,requirePhone:false,requireUsername:false,description:"",packages:[{days:"Free",price:0,stockOut:false}]}
+        ];
+
+        let products = [];
+        let orders = [];
+        let selectedIcon = "fas fa-box";
+
+        
+        // ===== Dynamic Packages & Image =====
+        function addPackageRow(days = '', price = '', stockOut = false) {
+            const list = document.getElementById('packagesList');
+            const div = document.createElement('div');
+            div.className = 'pkg-row';
+            div.innerHTML = `
+                <input type="text" class="pkg-days" placeholder="যেমন: 2 day" value="${days}" style="flex:1.2;">
+                <input type="number" class="pkg-price" placeholder="দাম" value="${price}" style="flex:0.8;">
+                <label><input type="checkbox" class="pkg-stock" ${stockOut ? 'checked' : ''}> Stock Out</label>
+                <button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()">×</button>
+            `;
+            list.appendChild(div);
+        }
+
+        function getPackagesFromUI() {
+            const rows = document.querySelectorAll('#packagesList .pkg-row');
+            const packages = [];
+            rows.forEach(row => {
+                const days = row.querySelector('.pkg-days').value.trim();
+                const price = parseInt(row.querySelector('.pkg-price').value) || 0;
+                const stockOut = row.querySelector('.pkg-stock').checked;
+                if (days) packages.push({ days, price, stockOut });
+            });
+            return packages;
+        }
+
+        function setPackagesToUI(packages) {
+            document.getElementById('packagesList').innerHTML = '';
+            if (!packages || !packages.length) {
+                addPackageRow('3 day', 340, false);
+                addPackageRow('7 day', 500, false);
+                addPackageRow('30 day', 1000, false);
+                return;
+            }
+            packages.forEach(p => addPackageRow(p.days, p.price, p.stockOut));
+        }
+
+        // Image handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('appImageFile');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    if (file.size > 500000) { // 500KB limit
+                        alert('ছবির সাইজ ৫০০KB এর কম হতে হবে!');
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        document.getElementById('appImageData').value = ev.target.result;
+                        document.getElementById('previewImg').src = ev.target.result;
+                        document.getElementById('imagePreview').style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+
+        function removeImage() {
+            document.getElementById('appImageData').value = '';
+            document.getElementById('appImageFile').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('previewImg').src = '';
+        }
+
+
+        function init() {
+            const stored = localStorage.getItem('tajim_products');
+            products = stored ? JSON.parse(stored) : JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+            if (!stored) localStorage.setItem('tajim_products', JSON.stringify(products));
+            orders = JSON.parse(localStorage.getItem('tajim_orders') || '[]');
+            renderProductList();
+            renderOrderList();
+            loadNoticeAndMessage();
+        }
+
+        function saveProducts() { localStorage.setItem('tajim_products', JSON.stringify(products)); localStorage.setItem('tajim_last_update', Date.now()); }
+        function saveOrders() { localStorage.setItem('tajim_orders', JSON.stringify(orders)); localStorage.setItem('tajim_last_update', Date.now()); }
+
+        function showAlert(msg, type='success') {
+            const box = document.getElementById('alertBox');
+            box.className = 'alert alert-' + type;
+            box.innerText = msg;
+            box.style.display = 'block';
+            setTimeout(() => box.style.display = 'none', 3500);
+        }
+
+        function showTab(tab) {
+            document.getElementById('tab-products').style.display = tab === 'products' ? 'block' : 'none';
+            document.getElementById('tab-orders').style.display = tab === 'orders' ? 'block' : 'none';
+            document.getElementById('tab-settings').style.display = tab === 'settings' ? 'block' : 'none';
+            document.querySelectorAll('.tab-btn').forEach((b,i) => {
+                b.classList.toggle('active', (tab==='products'&&i===0)||(tab==='orders'&&i===1)||(tab==='settings'&&i===2));
+            });
+            if (tab === 'orders') renderOrderList();
+        }
+
+        // Notice & Message
+        function loadNoticeAndMessage() {
+            document.getElementById('siteNotice').value = localStorage.getItem('tajim_notice') || '';
+            document.getElementById('siteMessage').value = localStorage.getItem('tajim_message') || '';
+            document.getElementById('noticeStatus').innerText = localStorage.getItem('tajim_notice') ? '✅ অ্যাকটিভ' : 'কোনো নোটিশ নেই';
+            document.getElementById('messageStatus').innerText = localStorage.getItem('tajim_message') ? '✅ অ্যাকটিভ' : 'কোনো মেসেজ নেই';
+        }
+        function saveNotice() { localStorage.setItem('tajim_notice', document.getElementById('siteNotice').value.trim()); showAlert('নোটিশ সেট হয়েছে!'); loadNoticeAndMessage(); }
+        function removeNotice() { localStorage.setItem('tajim_notice', ''); document.getElementById('siteNotice').value=''; showAlert('রিমুভ হয়েছে','error'); loadNoticeAndMessage(); }
+        function saveMessage() { localStorage.setItem('tajim_message', document.getElementById('siteMessage').value.trim()); showAlert('মেসেজ সেট হয়েছে!'); loadNoticeAndMessage(); }
+        function removeMessage() { localStorage.setItem('tajim_message', ''); document.getElementById('siteMessage').value=''; showAlert('রিমুভ হয়েছে','error'); loadNoticeAndMessage(); }
+
+        // Products
+        function renderProductList() {
+            const list = document.getElementById('productList');
+            if (!products.length) { list.innerHTML = '<div class="empty-state">কোনো প্রোডাক্ট নেই</div>'; return; }
+            list.innerHTML = products.map(p => `
+                <li class="product-item">
+                    <div>
+                        <span class="product-name">${p.name}</span>
+                        <span class="product-status ${p.stockOut?'status-out':'status-ok'}">${p.stockOut?'Stock Out':'Available'}</span>
+                    </div>
+                    <div style="display:flex;gap:6px;">
+                        <button class="btn-edit" onclick="openEditModal(${p.id})"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn-edit" style="background:#c62828;" onclick="deleteProduct(${p.id})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = 'নতুন প্রোডাক্ট যোগ';
+            document.getElementById('editId').value = '';
+            document.getElementById('appName').value = '';
+            document.getElementById('appCategory').value = 'OTHER';
+            document.getElementById('appTag').value = 'Mods';
+            document.getElementById('appBadge').value = 'NEW';
+            document.getElementById('appColor').value = 'linear-gradient(135deg, #00c6ff, #0072ff)';
+            setPackagesToUI([]);
+            removeImage();
+            document.getElementById('reqGmail').checked = true; document.getElementById('reqPhone').checked = false; document.getElementById('reqUsername').checked = false;
+            document.querySelector('input[name="stockStatus"][value="false"]').checked = true;
+            document.querySelector('input[name="appType"][value="Premium"]').checked = true;
+            document.getElementById('appDescription').value = '';
+            selectedIcon = 'fas fa-box'; document.getElementById('appIcon').value = selectedIcon;
+            document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        function openEditModal(id) {
+            const p = products.find(x => x.id === id); if (!p) return;
+            document.getElementById('modalTitle').innerText = 'Edit: ' + p.name;
+            document.getElementById('editId').value = p.id;
+            document.getElementById('appName').value = p.name;
+            document.getElementById('appCategory').value = p.category || 'OTHER';
+            document.getElementById('appTag').value = p.tag || 'Mods';
+            document.getElementById('appBadge').value = p.badge || 'NEW';
+            document.getElementById('appColor').value = p.color || '';
+            setPackagesToUI(p.packages || []);
+            if (p.image) {
+                document.getElementById('appImageData').value = p.image;
+                document.getElementById('previewImg').src = p.image;
+                document.getElementById('imagePreview').style.display = 'block';
+            } else {
+                removeImage();
+            }
+            document.getElementById('reqGmail').checked = !!p.requireGmail;
+            document.getElementById('reqPhone').checked = !!p.requirePhone;
+            document.getElementById('reqUsername').checked = !!p.requireUsername;
+            document.querySelector(`input[name="stockStatus"][value="${p.stockOut?'true':'false'}"]`).checked = true;
+            document.querySelector(`input[name="appType"][value="${(p.tag==='Free'||p.badge==='FREE')?'Free':'Premium'}"]`).checked = true;
+            document.getElementById('appDescription').value = p.description || '';
+            selectedIcon = p.icon || 'fas fa-box'; document.getElementById('appIcon').value = selectedIcon;
+            document.querySelectorAll('.icon-option').forEach(el => el.classList.toggle('selected', el.dataset.icon === selectedIcon));
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        function closeModal() { document.getElementById('productModal').classList.remove('active'); }
+
+        function selectIcon(el) {
+            document.querySelectorAll('.icon-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedIcon = el.dataset.icon;
+            document.getElementById('appIcon').value = selectedIcon;
+        }
+
+        function saveProduct() {
+            const id = document.getElementById('editId').value;
+            const name = document.getElementById('appName').value.trim();
+            if (!name) { alert('APP Name দিতে হবে!'); return; }
+            const appType = document.querySelector('input[name="appType"]:checked').value;
+            const isStockOut = document.querySelector('input[name="stockStatus"]:checked').value === 'true';
+            let packages = getPackagesFromUI();
+            if (appType === 'Free' && packages.length === 0) {
+                packages = [{days:'Free', price:0, stockOut:false}];
+            }
+            if (packages.length === 0) {
+                alert('অন্তত একটি প্যাকেজ যোগ করুন!');
+                return;
+            }
+            const product = {
+                id: id ? parseInt(id) : Date.now(), name,
+                category: document.getElementById('appCategory').value.trim() || 'OTHER',
+                tag: document.getElementById('appTag').value || 'Mods',
+                badge: document.getElementById('appBadge').value || 'NEW',
+                icon: document.getElementById('appIcon').value || 'fas fa-box',
+                color: document.getElementById('appColor').value || 'linear-gradient(135deg, #00c6ff, #0072ff)',
+                stockOut: isStockOut,
+                requireGmail: document.getElementById('reqGmail').checked,
+                requirePhone: document.getElementById('reqPhone').checked,
+                requireUsername: document.getElementById('reqUsername').checked,
+                description: document.getElementById('appDescription').value.trim(),
+                image: document.getElementById('appImageData').value || '',
+                packages
+            };
+            if (id) {
+                const idx = products.findIndex(p => p.id === parseInt(id));
+                if (idx !== -1) products[idx] = product;
+            } else products.push(product);
+            saveProducts(); renderProductList(); closeModal();
+            showAlert(id ? 'আপডেট হয়েছে!' : 'নতুন প্রোডাক্ট যোগ হয়েছে!');
+        }
+
+        function deleteProduct(id) {
+            if (!confirm('ডিলিট করতে চান?')) return;
+            products = products.filter(p => p.id !== id);
+            saveProducts(); renderProductList();
+            showAlert('ডিলিট হয়েছে!', 'error');
+        }
+
+        // ORDERS
+        function renderOrderList() {
+            const list = document.getElementById('orderList');
+            document.getElementById('orderCount').innerText = `(${orders.length})`;
+            if (!orders.length) {
+                list.innerHTML = '<div class="empty-state">এখনো কোনো অর্ডার নেই</div>';
+                return;
+            }
+            const sorted = [...orders].sort((a,b) => b.id - a.id);
+            list.innerHTML = sorted.map(o => `
+                <li class="order-item">
+                    <div style="flex:1;">
+                        <div class="order-title">${o.appName} 
+                            <span class="order-status ${o.status==='Pending'?'status-pending':o.status==='Processing'?'status-processing':'status-completed'}">${o.status}</span>
+                        </div>
+                        <div class="order-details">
+                            প্যাকেজ: ${o.package} (${o.price})<br>
+                            ${o.gmail ? 'Gmail: '+o.gmail+'<br>' : ''}
+                            ${o.phone ? 'Phone: '+o.phone+'<br>' : ''}
+                            ${o.username ? 'Username: '+o.username+'<br>' : ''}
+                            TrxID: ${o.trxId || 'N/A'}<br>
+                            সময়: ${o.createdAt || ''}<br>
+                            ${o.deliveryMsg ? '<b>মেসেজ:</b> '+o.deliveryMsg+'<br>' : ''}
+                            ${o.deliveryLink ? '<b>লিংক:</b> <a href="'+o.deliveryLink+'" target="_blank" style="color:#1565c0;">'+o.deliveryLink+'</a><br>' : ''}
+                            ${o.deliveryNote ? '<b>বিবরণ:</b> '+o.deliveryNote : ''}
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn btn-sm btn-primary" onclick="openDeliveryModal(${o.id})"><i class="fas fa-paper-plane"></i> ডেলিভারি দিন</button>
+                            ${o.status === 'Pending' ? `<button class="btn btn-sm btn-outline" onclick="updateOrderStatus(${o.id},'Processing')">Processing</button>` : ''}
+                            ${o.status !== 'Completed' ? `<button class="btn btn-sm btn-success" onclick="updateOrderStatus(${o.id},'Completed')">Completed</button>` : ''}
+                            <button class="btn btn-sm btn-danger" onclick="deleteOrder(${o.id})">ডিলিট</button>
+                        </div>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        function openDeliveryModal(id) {
+            const o = orders.find(x => x.id === id);
+            if (!o) return;
+            document.getElementById('deliveryOrderId').value = o.id;
+            document.getElementById('deliveryAppName').innerText = o.appName + ' (' + o.package + ')';
+            document.getElementById('deliveryMsg').value = o.deliveryMsg || '';
+            document.getElementById('deliveryLink').value = o.deliveryLink || '';
+            document.getElementById('deliveryNote').value = o.deliveryNote || '';
+            document.getElementById('deliveryModal').classList.add('active');
+        }
+
+        function closeDeliveryModal() {
+            document.getElementById('deliveryModal').classList.remove('active');
+        }
+
+        function saveDelivery() {
+            const id = parseInt(document.getElementById('deliveryOrderId').value);
+            const o = orders.find(x => x.id === id);
+            if (!o) return;
+
+            o.deliveryMsg = document.getElementById('deliveryMsg').value.trim();
+            o.deliveryLink = document.getElementById('deliveryLink').value.trim();
+            o.deliveryNote = document.getElementById('deliveryNote').value.trim();
+            o.status = 'Processing'; // auto set to Processing when delivering
+            o.deliveredAt = new Date().toLocaleString('bn-BD');
+
+            saveOrders();
+            renderOrderList();
+            closeDeliveryModal();
+            showAlert('ডেলিভারি তথ্য সেভ হয়েছে! ইউজার হিস্টোরিতে দেখতে পাবে।');
+        }
+
+        function updateOrderStatus(id, status) {
+            const o = orders.find(x => x.id === id);
+            if (o) {
+                o.status = status;
+                saveOrders();
+                renderOrderList();
+                showAlert('স্ট্যাটাস আপডেট হয়েছে: ' + status);
+            }
+        }
+
+        function deleteOrder(id) {
+            if (!confirm('অর্ডার ডিলিট করতে চান?')) return;
+            orders = orders.filter(o => o.id !== id);
+            saveOrders();
+            renderOrderList();
+            showAlert('অর্ডার ডিলিট হয়েছে', 'error');
+        }
+
+        init();
+        setInterval(() => {
+            orders = JSON.parse(localStorage.getItem('tajim_orders') || '[]');
+            if (document.getElementById('tab-orders').style.display !== 'none') renderOrderList();
+        }, 10000);
+    </script>
+
+    <!-- DELIVERY MODAL -->
+    <div class="modal" id="deliveryModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeDeliveryModal()">&times;</button>
+            <div class="modal-header">অর্ডার ডেলিভারি</div>
+            <p style="text-align:center;font-weight:700;color:#ff6f00;margin-bottom:12px;" id="deliveryAppName"></p>
+            <input type="hidden" id="deliveryOrderId">
+
+            <label>মেসেজ (ইউজারকে দেখাবে):</label>
+            <textarea id="deliveryMsg" rows="2" placeholder="যেমন: আপনার অ্যাকাউন্ট রেডি। নিচের লিংক থেকে নিন।"></textarea>
+
+            <label>ডাউনলোড লিংক:</label>
+            <input type="text" id="deliveryLink" placeholder="https://drive.google.com/... বা Telegram লিংক">
+
+            <label>বিবরণ / নোট:</label>
+            <textarea id="deliveryNote" rows="3" placeholder="যেমন: Username: xxx  Password: yyy  অথবা অন্য কোনো তথ্য"></textarea>
+
+            <div class="info-box" style="margin-top:12px;">
+                ফাইল সরাসরি আপলোড করা যায় না। Google Drive / MediaFire / Telegram এ আপলোড করে লিংক দিন।
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeDeliveryModal()">বাতিল</button>
+                <button class="btn btn-primary" onclick="saveDelivery()"><i class="fas fa-check"></i> Continue / সেভ</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
