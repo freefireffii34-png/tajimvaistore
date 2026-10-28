@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Panel Store - Control Panel</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<style>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: #f0f2f5; color: #333; min-height: 100vh; padding-bottom: 30px; }
@@ -1066,3 +1070,50 @@
     </div>
 </body>
 </html>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCb2Ms7ieRhbTV89mW5V3H_fE0bJTIx1wE",
+    authDomain: "panel-store-8beaa.firebaseapp.com",
+    projectId: "panel-store-8beaa",
+    storageBucket: "panel-store-8beaa.firebasestorage.app",
+    messagingSenderId: "922625805538",
+    appId: "1:922625805538:web:b47a0d6a5319d9d769a2bb",
+    measurementId: "G-4LR7P22DKD"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  async function loadOrders() {
+    const orderListContainer = document.querySelector('.order-list');
+    if (!orderListContainer) return;
+
+    try {
+      const querySnapshot = await db.collection("orders").get();
+      orderListContainer.innerHTML = "";
+
+      if (querySnapshot.empty) {
+        orderListContainer.innerHTML = "<p style='padding: 15px; text-align: center; color: #666;'>এখনো কোনো অর্ডার আসেনি!</p>";
+        return;
+      }
+
+      querySnapshot.forEach((doc) => {
+        const order = doc.data();
+        const orderItem = document.createElement('li');
+        orderItem.className = 'order-item';
+        orderItem.innerHTML = `
+          <div class="order-name">প্রোডাক্ট: ${order.product || 'N/A'}</div>
+          <div class="order-details">নাম: ${order.name || 'Unknown'} | ফোন: ${order.phone || 'N/A'}</div>
+          <div class="order-status status-pending">স্ট্যাটাস: ${order.status || 'Pending'}</div>
+        `;
+        orderListContainer.appendChild(orderItem);
+      });
+    } catch (error) {
+        console.error("অর্ডার লোড করতে সমস্যা হয়েছে: ", error);
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    loadOrders();
+  });
+</script>
