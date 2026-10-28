@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Store</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<style>
     <style>
         * {
             box-sizing: border-box;
@@ -775,6 +779,20 @@
     </div>
 
     <script>
+        // ===== Firebase Setup =====
+const firebaseConfig = {
+  apiKey: "AIzaSyCb2Ms7ieRhbTV89mW5V3H_fE0bJTIx1wE",
+  authDomain: "panel-store-8beaa.firebaseapp.com",
+  projectId: "panel-store-8beaa",
+  storageBucket: "panel-store-8beaa.firebasestorage.app",
+  messagingSenderId: "922625805538",
+  appId: "1:922625805538:web:b47a0d6a5319d9d769a2bb",
+  measurementId: "G-4LR7P22DKD"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+// ==========================
         let products = [];
         let currentProduct = null;
         let selectedDayPackage = null;
@@ -1304,6 +1322,19 @@
             orders.push(order);
             localStorage.setItem('tajim_orders', JSON.stringify(orders));
             localStorage.setItem('tajim_last_update', Date.now().toString());
+            // Firebase-এ অর্ডার সেভ করো
+try {
+    db.collection('orders').add({
+        ...order,
+        createdAtServer: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        console.log('Order saved to Firebase');
+    }).catch(err => {
+        console.error('Firebase error:', err);
+    });
+} catch(e) {
+    console.error(e);
+}
 
             // Notify admin on WhatsApp (so other phone orders reach you)
             try {
